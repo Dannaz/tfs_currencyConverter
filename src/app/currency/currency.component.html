@@ -1,0 +1,17 @@
+<app-currency-input
+  *ngFor="let converter of converters"
+  [currentConverter]="converter"
+  [currency]="currency"
+  (currencyInputChange)="onCurrencyInputChange($event)"
+></app-currency-input>
+<button class="currency-btn" (click)="addConverter()">Добавить конвертер</button>
+<!--
+
+<app-currency-dropdown
+  *ngFor="let converter of converters"
+  [currency]="currency"
+  [currentCurrency]="converter"
+></app-currency-dropdown>
+
+
+-->

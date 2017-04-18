@@ -1,0 +1,14 @@
+.currency-btn{
+  display: block;
+  background-color: #ffdd2d;
+  color: white;
+  width: 200px;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+}
