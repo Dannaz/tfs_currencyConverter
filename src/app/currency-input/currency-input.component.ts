@@ -9,6 +9,9 @@ import {FormControl} from "@angular/forms";
   styleUrls: ['./currency-input.component.css']
 })
 export class CurrencyInputComponent implements OnInit {
+  REGEXP_PATTERN: string = '^[0-9]+\.?[0-9]+$';
+  regExp: RegExp;
+  SEPARATOR: string = ' ';
 
   @Input() currentConverter;
   @Input() currency: object[];
@@ -18,23 +21,32 @@ export class CurrencyInputComponent implements OnInit {
   inputValueControl = new FormControl();
 
   constructor(private currencyService: CurrencyService) {
+    this.regExp = new RegExp(this.REGEXP_PATTERN);
   }
 
   ngOnInit() {
     this.inputValueControl.valueChanges.subscribe((inputValue) => {
      console.log('--- new value', inputValue);
-     this.currentConverter.walletValue = inputValue;
+     console.log('---format', this.format(parseFloat(inputValue), ' '));
+     console.log('---parsed', this.parse(parseFloat(this.format(parseFloat(inputValue), ' ')), ' '));
+     this.currentConverter.walletValue = this.parse(inputValue, this.SEPARATOR);
      this.currencyInputChange.emit(this.currentConverter);
     });
+  }
+
+  format(number :number, separator: string){
+    let parts = number.toString().split(".");
+    //parts[0] = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, separator);
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    return parts.join(".");
+  }
+
+  parse(number: number, separator: string){
+    return number.toString().replace(separator,'');
   }
 
   onWalletChange(walletName){
     this.currentConverter.walletName = walletName;
     this.currencyInputChange.emit(this.currentConverter);
   }
-
-
-
-
-
 }

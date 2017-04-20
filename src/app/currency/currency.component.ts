@@ -21,6 +21,7 @@ export class CurrencyComponent implements OnInit {
 
   ngOnInit() {
     this.updateCurrency();
+    this.currencyService.getCurrencyRates()
 
   }
 

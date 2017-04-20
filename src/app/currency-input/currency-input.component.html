@@ -1,5 +1,5 @@
 <div class="currency-input">
-  <input class="currency-input__input" type="text" [value]="currentConverter?.walletValue" [formControl]="inputValueControl">
+  <input class="currency-input__input" type="text" [value]="format(currentConverter?.walletValue, SEPARATOR)" [formControl]="inputValueControl">
   <app-currency-dropdown
     [currentCurrency]="currentConverter"
     [currency]="currency"
