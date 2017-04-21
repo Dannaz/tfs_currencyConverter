@@ -1,0 +1,9 @@
+.currency-list {
+  list-style-type: none;
+  width: 200px;
+}
+.currency-list__item {
+  padding: 10px;
+  border-bottom: 2px solid #dddddd;
+  text-align: center;
+}

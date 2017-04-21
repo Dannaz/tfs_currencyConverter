@@ -6,6 +6,9 @@
     (currencyChange)="onCurrencyChange($event)"
   ></app-currency-dropdown>
 </p>
-<ul>
-  <li *ngFor="let rate of popularRates">{{rate?.base}} : {{rate?.rates}}</li>
+<ul class="currency-list">
+  <li
+    class="currency-list__item"
+    *ngFor="let rate of popularRates"
+  >{{rate?.base}} : {{rate?.rates}}</li>
 </ul>
