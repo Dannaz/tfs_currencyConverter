@@ -14,6 +14,8 @@ export class CurrencyComponent implements OnInit {
   currency: object[];
   converters: object[];
 
+  popularRates;
+
   test;
 
 
@@ -21,7 +23,11 @@ export class CurrencyComponent implements OnInit {
 
   ngOnInit() {
     this.updateCurrency();
-    this.currencyService.getCurrencyRates()
+    this.currencyService.getCurrencyRatesPromise(this.DEFAULT_WALLET)
+      .then(data => {
+        console.log(data);
+        this.popularRates = data})
+      .catch(err => {console.log('Muahaha: ', err)});
 
   }
 
@@ -41,5 +47,13 @@ export class CurrencyComponent implements OnInit {
     console.log('--- adding');
     this.currencyService.addConverter();
     this.currencyService.updateConverters(100, "RUB");
+  }
+
+  updatePopularRates(walletName){
+    this.currencyService.getCurrencyRatesPromise(walletName)
+      .then(data => {
+        console.log(data);
+        this.popularRates = data})
+      .catch(err => {console.log('Muahaha: ', err)});
   }
 }

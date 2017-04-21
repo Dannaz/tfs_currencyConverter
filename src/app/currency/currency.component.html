@@ -5,6 +5,13 @@
   (currencyInputChange)="onCurrencyInputChange($event)"
 ></app-currency-input>
 <button class="currency-btn" (click)="addConverter()">Добавить конвертер</button>
+<div>
+  <app-currency-info
+    [currency]="currency"
+    [popularRates]="popularRates"
+    (walletChange)="updatePopularRates($event)"
+  ></app-currency-info>
+</div>
 <!--
 
 <app-currency-dropdown

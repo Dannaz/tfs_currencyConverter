@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Http, Response } from  '@angular/http';
 
 const BASE_URL = 'http://api.fixer.io';
-const POPULAR_WALLETS_URL = 'https://currencywidget.firebaseio.com/popular.json';
-const BASE_WALLET = 'RUB';
+const WALLETS_URL = 'https://currencywidget.firebaseio.com/';
+const baseWallet = 'RUB';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
@@ -24,6 +24,7 @@ export class CurrencyService {
 
   private rates: Rates;
   private currency: object[];
+  private popularRates;
 
   private converters: IConverter[] = [{
     walletName: 'RUB',
@@ -50,7 +51,7 @@ export class CurrencyService {
   }
 
   getCurrentCurrency(){
-    return this.http.get(`${BASE_URL}/latest?base=${BASE_WALLET}`)
+    return this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
       .map((res: Response) => {return res.json()})
       //.map((data) => {return this.convertCurrencyToArray(data)});
       .map(data => {
@@ -64,7 +65,7 @@ export class CurrencyService {
   }
 
   getCurrencyRates(){
-    const popularWallets$ = this.http.get(POPULAR_WALLETS_URL)
+    const popularWallets$ = this.http.get(`${WALLETS_URL}popular.json`)
       .map((res: Response) => {return res.json()})
       .map((data: object) => {
         const result = Object.keys(data)
@@ -72,10 +73,10 @@ export class CurrencyService {
         return result;
       });
 
-    const currencyRatesRaquest$ = popularWallets$
+    const currencyRatesRequest$ = popularWallets$
       .map(wallets => {
         return wallets.map(item => {
-          return `${BASE_URL}/latest?base=${item.walletName}&symbols=${BASE_WALLET}`;
+          return `${BASE_URL}/latest?base=${item.walletName}&symbols=${baseWallet}`;
         })
       })
       .do(urls => console.log('---urls', urls))
@@ -85,7 +86,7 @@ export class CurrencyService {
             const res = this.http.get(url)
               .map((res: Response) => {return res.json()})
               .map(data => {
-                return Object.assign({},{[data.base]: data.rates[BASE_WALLET]})
+                return Object.assign({},{[data.base]: data.rates[baseWallet]})
               });
             return res;
           });
@@ -93,11 +94,58 @@ export class CurrencyService {
       })
       .do(data => console.log('---req', data));
 
-    currencyRatesRaquest$.subscribe(data => {
+    currencyRatesRequest$.subscribe(data => {
       data.subscribe(data => console.log('---inner data', data));
       console.log('---outer data', data);
     });
+  }
 
+  // getPopularRates() {
+  //   fetch(`${WALLETS_URL}popular.json`)
+  //     .then(res => {return res.json()})
+  //     .then(data => {
+  //       return Object.keys(data)
+  //         .map(key => Object.assign({}, {key}, data[key]));
+  //     })
+  //     .then(wallets => this.popularRates = wallets);
+  // }
+
+  getCurrencyRatesPromise(baseWallet: string) {
+
+    return fetch(`${WALLETS_URL}popular.json`)
+      .then(res => {return res.json()})
+      .then(data => {
+        return Object.keys(data)
+          .map(key => Object.assign({}, {key}, data[key]));
+      })
+      .then(wallets => {
+        console.log();
+        return wallets
+          .filter(wallet => {return wallet.walletName !== baseWallet})
+          .map(wallet => {
+            return `${BASE_URL}/latest?base=${wallet.walletName}&symbols=${baseWallet}`;
+        });
+      })
+      .then(urls => {
+        return urls.map(url => {
+          return fetch(url)
+            .then(res => {return res.json()});
+        });
+      })
+      .then(promises => {
+        return Promise.all(promises);
+      })
+      .then(data => {
+        return Object.keys(data)
+          .map(key => {
+            return Object.assign(data[key], {rates: data[key].rates[baseWallet]});
+          });
+      })
+      .catch(err => {
+        console.log('--- oops',err.message);
+        throw err;
+      })
+      //.then(data => console.log('---promise', data));
   }
 
   updateConverters(value: number, wallet: string){

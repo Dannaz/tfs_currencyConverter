@@ -1,0 +1,11 @@
+<p>
+  Курсы валют по отношению к
+  <app-currency-dropdown
+    [currency]="currency"
+    [currentCurrency]="currentCurrency"
+    (currencyChange)="onCurrencyChange($event)"
+  ></app-currency-dropdown>
+</p>
+<ul>
+  <li *ngFor="let rate of popularRates">{{rate?.base}} : {{rate?.rates}}</li>
+</ul>

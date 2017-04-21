@@ -4,4 +4,7 @@
 .currency-input__input {
   font-size: 20px;
   padding: 10px;
+  border: 0px;
+  border-bottom: 1px solid #dddddd;
+  outline: none;
 }
