@@ -26,27 +26,42 @@ export class CurrencyInputComponent implements OnInit {
 
   ngOnInit() {
     this.inputValueControl.valueChanges.subscribe((inputValue) => {
-     console.log('--- new value', inputValue);
-     console.log('---format', this.format(parseFloat(inputValue), ' '));
-     console.log('---parsed', this.parse(parseFloat(this.format(parseFloat(inputValue), ' ')), ' '));
+     // console.log('--- new value', inputValue);
+     // console.log('---format', this.format(parseFloat(inputValue), ' '));
+     // console.log('---parsed', this.parse(parseFloat(this.format(parseFloat(inputValue), ' ')), ' '));
      this.currentConverter.walletValue = this.parse(inputValue, this.SEPARATOR);
      this.currencyInputChange.emit(this.currentConverter);
     });
   }
 
   format(number :number, separator: string){
-    let parts = number.toString().split(".");
-    //parts[0] = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, separator);
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
-    return parts.join(".");
+    if (isNaN(number)) {
+      return "0";
+    }
+    return number.toString().split(/(?=(?:\d{3})+(?!\d))/).join(separator);
+
+    //isNaN(number) ? "0" : number.toString().split(/(?=(?:\d{3})+(?!\d))/).join(separator);
+
+    // let value = number.toString().split(/(?=(?:\d{3})+(?!\d))/);
+    // console.log('---value',value);
+    // return number.toString().split(/(?=(?:\d{3})+(?!\d))/).join(separator);
+
+    // if (isNaN(number)) return "0";
+    // let parts = number.toString().split(".");
+    // //parts[0] = parts[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, separator);
+    // parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    // return parts.join(".");
   }
 
   parse(number: number, separator: string){
-    return number.toString().replace(separator,'');
+    return number.toString().split(separator).join('');
+    //return number.toString().replace(separator,'');
   }
 
   onWalletChange(walletName){
     this.currentConverter.walletName = walletName;
     this.currencyInputChange.emit(this.currentConverter);
+  }
+  onChange(evt){
   }
 }

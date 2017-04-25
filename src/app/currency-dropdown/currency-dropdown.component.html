@@ -4,6 +4,7 @@
     <li
     *ngFor="let wallet of currency"
     class="dropdown-content__item"
-    >{{wallet?.walletName}}</li>
+    [attr.data-wallet]="wallet.walletName"
+    >{{wallet?.walletLocaleName}}</li>
   </ul>
 </div>

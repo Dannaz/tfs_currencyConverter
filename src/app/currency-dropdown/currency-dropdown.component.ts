@@ -19,9 +19,10 @@ export class CurrencyDropdownComponent implements OnInit {
   }
 
   onItemClick(target){
+    console.log(target);
     if (target.classList.contains('dropdown-content__item')) {
-      if(target.textContent !== this.currentCurrency.walletName){
-        Object.assign(this.currentCurrency, {walletName: target.textContent});
+      if(target.dataset.wallet !== this.currentCurrency.walletName){
+        Object.assign(this.currentCurrency, {walletName: target.dataset.wallet});
         this.currencyChange.emit(this.currentCurrency.walletName);
       }
     }

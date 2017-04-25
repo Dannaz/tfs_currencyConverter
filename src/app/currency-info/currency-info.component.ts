@@ -17,11 +17,9 @@ export class CurrencyInfoComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
   }
 
   onCurrencyChange(value) {
-    console.log(value);
     this.walletChange.emit(value);
   }
 
