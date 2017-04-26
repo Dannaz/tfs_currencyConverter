@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from  '@angular/http';
+import { Http, Response } from '@angular/http';
 
 const BASE_URL = 'http://api.fixer.io';
 const WALLETS_URL = 'https://currencywidget.firebaseio.com/';
@@ -14,6 +14,7 @@ import 'rxjs/add/operator/startWith'
 import {IConverter} from "../model/iconverter";
 import {Observable, Observer} from "rxjs";
 import {switchMap} from "rxjs/operator/switchMap";
+import {isUndefined} from "util";
 
 interface Rates {
   [key: string]: number
@@ -56,8 +57,6 @@ interface IWallet {
 @Injectable()
 export class CurrencyService {
 
-  constructor(private http: Http) { }
-
   private rates: Rates;
   private currency: object[];
   private popularWallets: IPopularWallets[];
@@ -72,6 +71,8 @@ export class CurrencyService {
     walletName: 'USD',
     walletValue: 0
   }];
+
+  constructor(private http: Http) { }
 
   getConverters() {
     //let storedConverters = JSON.parse(localStorage.getItem('converters'));
@@ -89,37 +90,35 @@ export class CurrencyService {
     return this.converters;
   }
 
-  getCurrentCurrency(){
-    return this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
-      .map((res: Response) => {return res.json()})
-      //.map((data) => {return this.convertCurrencyToArray(data)});
-      .map(data => {
-        this.rates = this.convertToRatesObject(data);
-        return this.rates;
-      })
-      .map(rates => {
-        this.currency = this.convertToCurrencyArray(rates);
-        return this.currency;
+
+
+  initialize() {
+    // this.loadActualRates().subscribe((rates: Rates) => {
+    //   this.rates = rates;
+    // });
+    // this.loadPopularWallets().subscribe((popularWallets: IPopularWallets[]) => {
+    //  this.popularWallets = popularWallets;
+    // });
+
+    //return this.loadWalletsLocalization();
+
+    return Observable.combineLatest(this.loadActualRates(), this.loadPopularWallets(), this.loadWalletsLocalization())
+      .map(([actualRates, popularWallets, localization]) => {
+        return localization;
       });
-  }
-
-  initialize(){
-
-    this.loadActualRates().subscribe((rates: Rates) => {this.rates = rates});
-    this.loadPopularWallets().subscribe((popularWallets: IPopularWallets[]) => {
-     this.popularWallets = popularWallets;
-    });
-
-    return this.loadWalletsLocalization();
-
     //return initialRequests$;//.subscribe(data => console.log('combined:', data));
   }
 
-  loadActualRates(): Observable<Rates> {
+  private loadActualRates(): Observable<Rates> {
      return this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
-      .map((res: Response) => {return res.json()})
+      .map((res: Response) => {
+       return res.json();
+      })
       .map((data: IRates) => {
         return this.convertToRatesObject(data);
+      })
+       .do((rates: Rates) => {
+        this.rates = rates;
       })
       .catch((err: Error) => {
         console.warn('--- failed loading rates', err);
@@ -127,7 +126,7 @@ export class CurrencyService {
       });
   }
 
-  loadPopularWallets(): Observable<IPopularWallets[]> {
+  private loadPopularWallets(): Observable<IPopularWallets[]> {
     return this.http.get(`${WALLETS_URL}popular.json`)
       .map((res: Response) => {return res.json()})
       .map((data: IPopularWalletsDBO[]) => {
@@ -136,13 +135,16 @@ export class CurrencyService {
             return Object.assign({}, {key}, data[key]);
           });
       })
+      .do((popularWallets: IPopularWallets[]) => {
+        this.popularWallets = popularWallets;
+      })
       .catch((err: Error) => {
         console.warn('--- failed loading popular wallets', err);
         return Observable.empty();
       });
   }
 
-  loadWalletsLocalization(): Observable<IWallet[]> {
+  private loadWalletsLocalization(): Observable<IWallet[]> {
     return this.http.get(`${WALLETS_URL}currency.json`)
       .map((res: Response) => {return res.json()})
       .map((data: object) => {
@@ -161,7 +163,7 @@ export class CurrencyService {
   }
 
 
-  private compareWalletNames(name1: IWallet, name2: IWallet){
+  private compareWalletNames(name1: IWallet, name2: IWallet) {
     if (name1.walletLocaleName < name2.walletLocaleName) {
       return -1;
     }
@@ -172,11 +174,14 @@ export class CurrencyService {
   }
 
   getCurrencyRates(baseWallet: string): Observable<IRates[]> | any {
-    let currency;
-    if(this.cachedRates) {
-      currency = this.cachedRates.find(item => {return item.base === baseWallet});
-      if (currency) return currency.rates;
-      //return this.cachedRates[baseWallet];
+    if (this.cachedRates) {
+      const currency = this.cachedRates.find(item => {
+        return item.base === baseWallet;
+      });
+      if (!isUndefined(currency)) {
+        console.log('used cached values');
+        return currency.rates;
+      }
     }
 
     // const popularWallets$ = this.http.get(`${WALLETS_URL}popular.json`)
@@ -212,10 +217,15 @@ export class CurrencyService {
 
 
     const CurrencyRatesRequest$ = Observable.of(this.popularWallets)
-      .switchMap(wallets => {
-        const urls = wallets.map(wallet => {
-          return `${BASE_URL}/latest?base=${wallet.walletName}&symbols=${baseWallet}`;
-        });
+      .switchMap((wallets: IPopularWallets[]) => {
+        console.log('---pw', this.popularWallets);
+        const urls = wallets
+          .filter((wallet: IPopularWallets) => {
+           return wallet.walletName !== baseWallet;
+          })
+          .map(wallet => {
+            return `${BASE_URL}/latest?base=${wallet.walletName}&symbols=${baseWallet}`;
+          });
         const requests = urls.map(url => {
           return this.http.get(url)
             .map(res => {
@@ -230,11 +240,11 @@ export class CurrencyService {
       .do((rates) => {
         console.log('---r', rates);
 
-        let el = Object.keys(rates)
+        const muteRates = Object.keys(rates)
           .map(key => {
             return Object.assign(rates[key], {rates: rates[key].rates[baseWallet]});
           });
-        console.log('after mute', el);
+        console.log('after mute', muteRates);
 
         this.cachedRates.push(Object.assign({}, {base: baseWallet}, {rates: rates}));
         //console.log('cr:', this.cachedRates);
@@ -270,6 +280,68 @@ export class CurrencyService {
   //     .then(wallets => this.popularRates = wallets);
   // }
 
+  updateConverters(value: number, wallet: string){
+    if (!this.converters) {
+      this.converters = this.getConverters();
+    }
+    this.converters
+      .map(converter => {
+        converter.walletValue = this.convertValue(value, wallet, converter.walletName);
+      });
+    this.saveConverters();
+    return this.converters;
+  }
+
+  addConverter() {
+    const converter: IConverter = {
+      walletName: 'RUB',
+      walletValue: 0
+    };
+    this.converters.push(converter);
+    console.log('--- converters', this.converters);
+  }
+
+  saveConverters() {
+    const convertersWallets: string[] = [];
+    this.converters.forEach(converter => {convertersWallets.push(converter.walletName)});
+    // localStorage.setItem('converters', JSON.stringify(convertersWallets));
+  }
+
+  private  convertValue(value: number, fromWallet: string, toWallet: string) {
+    //let converted: number = (value / this.rates[fromWallet]) * this.rates[toWallet];
+    //converted.toFixed(2);
+    return parseFloat(((value / this.rates[fromWallet]) * this.rates[toWallet]).toFixed(2));
+  }
+
+  private convertToRatesObject(data): Rates {
+    const ratesObject = {};
+    Object.assign(ratesObject, {[data.base]: 1});
+    for (const key in data.rates) {
+      Object.assign(ratesObject, {[key]: data.rates[key]});
+    }
+    return ratesObject;
+  }
+
+  private convertToCurrencyArray(rates): object[] {
+    return Object.keys(rates).map(key => {
+      return {walletName: key};
+    });
+  }
+
+  getCurrentCurrency(){
+    return this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
+      .map((res: Response) => {return res.json()})
+      //.map((data) => {return this.convertCurrencyToArray(data)});
+      .map(data => {
+        this.rates = this.convertToRatesObject(data);
+        return this.rates;
+      })
+      .map(rates => {
+        this.currency = this.convertToCurrencyArray(rates);
+        return this.currency;
+      });
+  }
+
   getCurrencyRatesPromise(baseWallet: string) {
 
     return fetch(`${WALLETS_URL}popular.json`)
@@ -284,7 +356,7 @@ export class CurrencyService {
           .filter(wallet => {return wallet.walletName !== baseWallet})
           .map(wallet => {
             return `${BASE_URL}/latest?base=${wallet.walletName}&symbols=${baseWallet}`;
-        });
+          });
       })
       .then((urls: string[]) => {
         return urls.map(url => {
@@ -304,51 +376,7 @@ export class CurrencyService {
       .catch(err => {
         console.log('--- oops',err.message);
         throw err;
-      })
-      //.then(data => console.log('---promise', data));
-  }
-
-  updateConverters(value: number, wallet: string){
-    if (!this.converters) this.converters = this.getConverters();
-    this.converters
-      .map(converter => {
-        converter.walletValue = this.convertValue(value, wallet, converter.walletName);
       });
-    this.saveConverters();
-    return this.converters;
-  }
-
-  addConverter(){
-    let converter: IConverter = {
-      walletName: "RUB",
-      walletValue: 0
-    };
-    this.converters.push(converter);
-    console.log('--- converters', this.converters);
-  }
-
-  saveConverters(){
-    let convertersWallets: string[] = [];
-    this.converters.forEach(conv => {convertersWallets.push(conv.walletName)});
-    localStorage.setItem('converters', JSON.stringify(convertersWallets));
-  }
-
-  private  convertValue(value:number, fromWallet: string, toWallet: string) {
-    //let converted: number = (value / this.rates[fromWallet]) * this.rates[toWallet];
-    //converted.toFixed(2);
-    return parseFloat(((value / this.rates[fromWallet]) * this.rates[toWallet]).toFixed(2));
-  }
-
-  private convertToRatesObject(data): Rates {
-    let ratesObject = {};
-    Object.assign(ratesObject, {[data.base]: 1});
-    for(let key in data.rates) {
-      Object.assign(ratesObject, {[key]: data.rates[key]});
-    }
-    return ratesObject;
-  }
-
-  private convertToCurrencyArray(rates): object[]{
-    return Object.keys(rates).map(key => {return {walletName: key}});
+    //.then(data => console.log('---promise', data));
   }
 }

@@ -20,17 +20,20 @@ export class CurrencyComponent implements OnInit {
   constructor(private currencyService: CurrencyService) { }
 
   ngOnInit() {
-    //this.updateCurrency();
+    // this.updateCurrency();
     this.currencyService.initialize()
-      .subscribe((data) => {
-        console.log('oninit', data);
-        this.currency = data;
-        //this.popularRates = data[1];
-        //console.log('---popular rates', this.popularRates);
+      .subscribe((localizedWallets) => {
+        console.log('onInit', localizedWallets);
+        this.currency = localizedWallets;
+        this.updatePopularRates(this.DEFAULT_WALLET);
+        //this.currency = data;
+        // this.popularRates = data[1];
+        // console.log('---popular rates', this.popularRates);
         this.converters = this.currencyService.updateConverters(this.DEFAULT_VALUE, this.DEFAULT_WALLET);
+        //this.updatePopularRates(this.DEFAULT_WALLET);
       });
-    //this.updatePopularRates(this.DEFAULT_WALLET);
-    //this.currencyService.getCurrencyRates(this.DEFAULT_WALLET);
+    // this.updatePopularRates(this.DEFAULT_WALLET);
+    // this.currencyService.getCurrencyRates(this.DEFAULT_WALLET);
     // this.currencyService.getCurrencyRatesPromise(this.DEFAULT_WALLET)
     //   .then(data => {
     //     console.log(data);
@@ -54,12 +57,12 @@ export class CurrencyComponent implements OnInit {
   addConverter(){
     console.log('--- adding');
     this.currencyService.addConverter();
-    this.currencyService.updateConverters(100, "RUB");
+    this.currencyService.updateConverters(100, 'RUB');
   }
 
   updatePopularRates(walletName){
 
-    let result = this.currencyService.getCurrencyRates(walletName);
+    const result = this.currencyService.getCurrencyRates(walletName);
 
     if (result instanceof Observable) {
       result.subscribe(data => this.popularRates = data);
@@ -67,12 +70,12 @@ export class CurrencyComponent implements OnInit {
       this.popularRates = result;
     }
 
-    console.log('type', result instanceof Observable);
+    //console.log('type', result instanceof Observable);
     //
     // console.log('---pr', this.popularRates);
 
 
-    //.subscribe((data) => {console.log(data)});
+    // .subscribe((data) => {console.log(data)});
 
     // this.currencyService.getCurrencyRatesPromise(walletName)
     //   .then(data => {
