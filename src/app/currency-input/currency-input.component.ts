@@ -17,6 +17,7 @@ export class CurrencyInputComponent implements OnInit {
   @Input() currency: object[];
 
   @Output() currencyInputChange = new EventEmitter();
+  @Output() converterDelete = new EventEmitter();
 
   inputValueControl = new FormControl();
 
@@ -34,9 +35,9 @@ export class CurrencyInputComponent implements OnInit {
     });
   }
 
-  format(number :number, separator: string){
+  format(number: number, separator: string) {
     if (isNaN(number)) {
-      return "0";
+      return '0';
     }
     return number.toString().split(/(?=(?:\d{3})+(?!\d))/).join(separator);
 
@@ -53,15 +54,19 @@ export class CurrencyInputComponent implements OnInit {
     // return parts.join(".");
   }
 
-  parse(number: number, separator: string){
+  parse(number: number, separator: string) {
     return number.toString().split(separator).join('');
     //return number.toString().replace(separator,'');
   }
 
-  onWalletChange(walletName){
+  onWalletChange(walletName) {
     this.currentConverter.walletName = walletName;
     this.currencyInputChange.emit(this.currentConverter);
   }
-  onChange(evt){
+  onBlur(evt) {
+    console.log(evt.target.value);
+  }
+  deleteInput(event) {
+    this.converterDelete.emit(this.currentConverter);
   }
 }

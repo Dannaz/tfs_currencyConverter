@@ -4,13 +4,16 @@
     type="text"
     [value]="format(currentConverter?.walletValue, SEPARATOR)"
     [formControl]="inputValueControl"
-    (keypress)="onChange($event)"
+    (blur)="onBlur($event)"
   >
   <app-currency-dropdown
     [currentCurrency]="currentConverter"
     [currency]="currency"
     (currencyChange)="onWalletChange($event)"
   ></app-currency-dropdown>
+  <span
+    (click)="deleteInput($event)"
+  >❌</span>
 </div>
 <!--
 <input type="text" [value]="unConvertedValue" [formControl]="inputValueControl">

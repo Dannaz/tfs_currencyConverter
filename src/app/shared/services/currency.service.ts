@@ -8,16 +8,21 @@ const baseWallet = 'RUB';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/forkJoin';
-import 'rxjs/add/observable/combineLatest'
-import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/operator/startWith'
-import {IConverter} from "../model/iconverter";
-import {Observable, Observer} from "rxjs";
-import {switchMap} from "rxjs/operator/switchMap";
-import {isUndefined} from "util";
+import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/startWith';
+import {Observable} from 'rxjs';
+import {isUndefined} from 'util';
+//import {IConverter} from '../model/iconverter';
 
 interface Rates {
   [key: string]: number
+}
+
+interface IConverter {
+  id: number,
+  walletName: string,
+  walletValue: number
 }
 
 interface IRates {
@@ -65,9 +70,11 @@ export class CurrencyService {
   private cachedRates: ICachedRates[] = [];
 
   private converters: IConverter[] = [{
+    id: 1,
     walletName: 'RUB',
     walletValue: 0
-  },{
+  }, {
+    id: 2,
     walletName: 'USD',
     walletValue: 0
   }];
@@ -102,31 +109,35 @@ export class CurrencyService {
 
     //return this.loadWalletsLocalization();
 
-    return Observable.combineLatest(this.loadActualRates(), this.loadPopularWallets(), this.loadWalletsLocalization())
+    return Observable.combineLatest(this.loadActualRates(600), this.loadPopularWallets(), this.loadWalletsLocalization())
       .map(([actualRates, popularWallets, localization]) => {
         return localization;
       });
     //return initialRequests$;//.subscribe(data => console.log('combined:', data));
   }
 
-  private loadActualRates(): Observable<Rates> {
-     return this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
+  loadActualRates(updateInterval: number): Observable<Rates> {
+    const actualRates$ = this.http.get(`${BASE_URL}/latest?base=${baseWallet}`)
       .map((res: Response) => {
-       return res.json();
+        return res.json();
       })
       .map((data: IRates) => {
         return this.convertToRatesObject(data);
       })
-       .do((rates: Rates) => {
+      .do((rates: Rates) => {
         this.rates = rates;
       })
       .catch((err: Error) => {
         console.warn('--- failed loading rates', err);
         return Observable.empty();
       });
+
+    return Observable.interval(updateInterval).startWith(0).switchMap(() => {
+      return actualRates$;
+    });
   }
 
-  private loadPopularWallets(): Observable<IPopularWallets[]> {
+  loadPopularWallets(): Observable<IPopularWallets[]> {
     return this.http.get(`${WALLETS_URL}popular.json`)
       .map((res: Response) => {return res.json()})
       .map((data: IPopularWalletsDBO[]) => {
@@ -144,7 +155,7 @@ export class CurrencyService {
       });
   }
 
-  private loadWalletsLocalization(): Observable<IWallet[]> {
+  loadWalletsLocalization(): Observable<IWallet[]> {
     return this.http.get(`${WALLETS_URL}currency.json`)
       .map((res: Response) => {return res.json()})
       .map((data: object) => {
@@ -294,6 +305,7 @@ export class CurrencyService {
 
   addConverter() {
     const converter: IConverter = {
+      id: Math.random() * 1000,
       walletName: 'RUB',
       walletValue: 0
     };
@@ -378,5 +390,12 @@ export class CurrencyService {
         throw err;
       });
     //.then(data => console.log('---promise', data));
+  }
+
+  deleteConverter(converterToDelete: IConverter) {
+    this.converters = this.converters
+      .filter((converter: IConverter) => {
+        return converter.id !== converterToDelete.id;
+      });
   }
 }

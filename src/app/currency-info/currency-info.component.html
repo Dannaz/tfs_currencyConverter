@@ -10,5 +10,5 @@
   <li
     class="currency-list__item"
     *ngFor="let rate of popularRates"
-  >{{rate?.base}} : {{rate?.rates}}</li>
+  >{{rate?.base}} : {{(rate?.rates * 1.01).toFixed(2)}} / {{(rate.rates * 0.99 ).toFixed(2)}}</li>
 </ul>
