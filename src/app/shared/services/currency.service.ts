@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
 
-const BASE_URL = 'http://api.fixer.io';
+const BASE_URL = 'https://api.fixer.io';
 const WALLETS_URL = 'https://currencywidget.firebaseio.com/';
 const baseWallet = 'RUB';
 
