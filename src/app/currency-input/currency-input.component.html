@@ -1,19 +1,23 @@
 <div class="currency-input">
-  <input
-    class="currency-input__input"
-    type="text"
-    [value]="format(currentConverter?.walletValue, SEPARATOR)"
-    [formControl]="inputValueControl"
-    (blur)="onBlur($event)"
-  >
-  <app-currency-dropdown
-    [currentCurrency]="currentConverter"
-    [currency]="currency"
-    (currencyChange)="onWalletChange($event)"
-  ></app-currency-dropdown>
-  <span
+  <div class="currency-input__input">
+    <input
+      type="text"
+      [value]="format(currentConverter?.walletValue, SEPARATOR)"
+      [formControl]="inputValueControl"
+      (blur)="onBlur($event)"
+    >
+  </div>
+  <div class="currency-input__dropdown">
+    <app-currency-dropdown
+      [currentCurrency]="currentConverter"
+      [currency]="currency"
+      (currencyChange)="onWalletChange($event)"
+    ></app-currency-dropdown>
+  </div>
+  <div class="currency-input__delete-btn"
     (click)="deleteInput($event)"
-  >❌</span>
+  >❌</div>
+
 </div>
 <!--
 <input type="text" [value]="unConvertedValue" [formControl]="inputValueControl">

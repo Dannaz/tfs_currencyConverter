@@ -9,6 +9,7 @@ import {CurrencyService} from "./shared/services/currency.service";
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
 import { CurrencyDropdownComponent } from './currency-dropdown/currency-dropdown.component';
 import { CurrencyInfoComponent } from './currency-info/currency-info.component';
+import { CentredFlexDirective } from './shared/directives/centred-flex.directive';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { CurrencyInfoComponent } from './currency-info/currency-info.component';
     CurrencyComponent,
     CurrencyInputComponent,
     CurrencyDropdownComponent,
-    CurrencyInfoComponent
+    CurrencyInfoComponent,
+    CentredFlexDirective
   ],
   imports: [
     BrowserModule,

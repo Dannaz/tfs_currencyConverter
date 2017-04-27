@@ -1,16 +1,29 @@
-.currency-btn{
-  display: block;
-  background-color: #ffdd2d;
-  color: white;
-  width: 200px;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
+app-currency-input {
+  width: 100%;
+  height: 60px;
+  /*background-color: yellow;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.currency-btn {
+  background: #34d955;
+  background-image: -webkit-linear-gradient(top, #34d955, #7bb82b);
+  background-image: -moz-linear-gradient(top, #34d955, #7bb82b);
+  background-image: -ms-linear-gradient(top, #34d955, #7bb82b);
+  background-image: -o-linear-gradient(top, #34d955, #7bb82b);
+  background-image: linear-gradient(to bottom, #34d955, #7bb82b);
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  margin: 20px auto;
   outline: none;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 10px;
+  padding: 10px 15px 10px 15px;
+  text-decoration: none;
+  border-color: transparent;
 }
 .spinner {
   width: 100px;

@@ -1,14 +1,20 @@
-<p>
-  Курсы валют по отношению к
-  <app-currency-dropdown
-    [currency]="currency"
-    [currentCurrency]="currentCurrency"
-    (currencyChange)="onCurrencyChange($event)"
-  ></app-currency-dropdown>
-</p>
-<ul class="currency-list">
-  <li
-    class="currency-list__item"
-    *ngFor="let rate of popularRates"
-  >{{rate?.base}} : {{(rate?.rates * 1.01).toFixed(2)}} / {{(rate.rates * 0.99 ).toFixed(2)}}</li>
-</ul>
+<div class="currency-info">
+  <div class="currency-info__header">
+    <p>
+      Курсы валют по отношению к
+    </p>
+      <app-currency-dropdown
+        [currency]="currency"
+        [currentCurrency]="currentCurrency"
+        (currencyChange)="onCurrencyChange($event)"
+      ></app-currency-dropdown>
+  </div>
+  <div class="currency-info__list">
+    <ul class="currency-list">
+      <li
+        class="currency-list__item"
+        *ngFor="let rate of popularRates"
+      >{{rate?.base}} : {{(rate?.rates * 0.99).toFixed(2)}} / {{(rate.rates * 1.01 ).toFixed(2)}}</li>
+    </ul>
+  </div>
+</div>

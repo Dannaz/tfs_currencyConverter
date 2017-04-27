@@ -2,4 +2,7 @@
 body {
   font-family: SansSerif Tahoma;
   font-size: 20px;
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
 }

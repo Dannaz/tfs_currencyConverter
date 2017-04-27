@@ -1,9 +1,29 @@
+p {
+  display: block;
+  color: #3cb0fd;
+}
 .currency-list {
   list-style-type: none;
+  list-style-position: outside;
+  -webkit-padding-start: 0;
   width: 200px;
 }
 .currency-list__item {
   padding: 10px;
   border-bottom: 2px solid #dddddd;
   text-align: center;
+}
+
+.currency-info__header,
+.currency-info__list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.currency-list__item {
+  color: #3cb0fd;
+}
+app-currency-dropdown {
+  width: 50%;
 }

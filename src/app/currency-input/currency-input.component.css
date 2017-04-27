@@ -1,10 +1,69 @@
 .currency-input {
-  padding: 10px;
+  width: 100%;
+  height: 100%;
+  //border: 1px solid #0a0ed6;
+  background-image: -webkit-linear-gradient(top, #8efff9, #7fe2dd);
+  background-image: -moz-linear-gradient(top, #8efff9, #7fe2dd);
+  background-image: -ms-linear-gradient(top, #8efff9, #7fe2dd);
+  background-image: -o-linear-gradient(top, #8efff9, #7fe2dd);
+  background-image: linear-gradient(to bottom, #8efff9, #7fe2dd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .currency-input__input {
-  font-size: 20px;
-  padding: 10px;
-  border: 0px;
-  border-bottom: 1px solid #dddddd;
+  width: 60%;
+  /*background-color: red;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+}
+.currency-input__input input {
+  width: 90%;
+  height: 40px;
+  border: transparent;
+  border: 2px solid #34d955;
+  border-radius: 20px;
+  font-size: 25px;
+  color: #3cb0fd;
+  text-align: center;
+}
+.currency-input__input input::selection {
+  background-color: #ffdd2d;
+}
+input:focus {
   outline: none;
+}
+.currency-input__dropdown {
+  width: 30%;
+  height: 100%;
+  min-width: 96px;
+  /*background-color: blue;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.currency-input__delete-btn {
+  width: 10%;
+  min-width: 32px;
+  //background-color: blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.2;
+}
+.currency-input__delete-btn:hover {
+  opacity: 1;
+}
+delete-btn-hiden {
+  display: none;
+}
+app-currency-dropdown {
+  width: 90%;
+  /*background-color: purple;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
