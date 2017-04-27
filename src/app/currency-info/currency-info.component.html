@@ -10,11 +10,32 @@
       ></app-currency-dropdown>
   </div>
   <div class="currency-info__list">
+    <div class="currency-type-toggler">
+      Buy
+      <label class="switch">
+        <input type="checkbox" checked (change)="onChange($event)">
+        <div class="slider round"></div>
+      </label>
+      sell
+    </div>
     <ul class="currency-list">
       <li
         class="currency-list__item"
         *ngFor="let rate of popularRates"
-      >{{rate?.base}} : {{(rate?.rates * 0.99).toFixed(2)}} / {{(rate.rates * 1.01 ).toFixed(2)}}</li>
+      >
+        <span class="currency-wallet">{{rate?.base}}</span>
+        <span
+          class="currency"
+          [class.targeted-currency]="!isSell()"
+        >{{(rate?.rates * 0.99).toFixed(2)}}
+        </span>
+        /
+        <span
+          class="currency"
+          [class.targeted-currency]="isSell()"
+        >{{(rate.rates * 1.01 ).toFixed(2)}}
+        </span>
+      </li>
     </ul>
   </div>
 </div>

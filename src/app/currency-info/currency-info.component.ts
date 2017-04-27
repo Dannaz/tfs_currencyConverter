@@ -7,6 +7,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 })
 export class CurrencyInfoComponent implements OnInit {
 
+  currencySellStatus: boolean = true;
+
   @Input() currency;
   @Input() popularRates: object;
 
@@ -17,6 +19,14 @@ export class CurrencyInfoComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  isSell(): boolean {
+    return this.currencySellStatus;
+  }
+
+  onChange(event) {
+    this.currencySellStatus = event.target.checked;
   }
 
   onCurrencyChange(value) {
