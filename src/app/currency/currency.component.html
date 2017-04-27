@@ -2,6 +2,7 @@
   *ngFor="let converter of converters"
   [currentConverter]="converter"
   [currency]="currency"
+  [canDelete]="converters.length > 2"
   (currencyInputChange)="onCurrencyInputChange($event)"
   (converterDelete)="onConverterDelete($event)"
 ></app-currency-input>

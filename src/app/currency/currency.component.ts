@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {CurrencyService} from "../shared/services/currency.service";
 import {Observable} from "rxjs";
 import {isUndefined} from "util";
+import {IConverter} from "../shared/model/iconverter";
+import {IWallet} from "../shared/model/iwallet";
+import {IRates} from "../shared/model/irates";
 
 @Component({
   selector: 'app-currency',
@@ -14,10 +17,9 @@ export class CurrencyComponent implements OnInit {
   DEFAULT_WALLET: string = 'RUB';
   DEFAULT_UPDATE_INTERVAL: number = 60000;
 
-  currency;
-  converters: object[];
-
-  popularRates;
+  currency: IWallet[];
+  converters: IConverter[];
+  popularRates: IRates[];
 
   constructor(private currencyService: CurrencyService) { }
 
@@ -26,7 +28,7 @@ export class CurrencyComponent implements OnInit {
     const popular$ = this.currencyService.loadPopularWallets();
     const locale$ = this.currencyService.loadWalletsLocalization();
 
-    rates$.subscribe((data) => {
+    rates$.subscribe(() => {
       if (isUndefined(this.converters)) {
         this.converters = this.currencyService.updateConverters(this.DEFAULT_VALUE, this.DEFAULT_WALLET);
       }
@@ -35,14 +37,14 @@ export class CurrencyComponent implements OnInit {
         console.log('something gone wrong on rates loading:', err);
       });
 
-    locale$.delay(1000).subscribe((walletsLocale) => {
+    locale$.subscribe((walletsLocale: Array<IWallet>) => {
       this.currency = walletsLocale;
     },
       (err: Error | any) => {
         console.log('something gone wrong on wallets locale loading:', err);
       });
 
-    popular$.delay(1000).subscribe(() => {
+    popular$.subscribe(() => {
       this.updatePopularRates(this.DEFAULT_WALLET);
     },
       (err: Error | any) => {
@@ -55,7 +57,6 @@ export class CurrencyComponent implements OnInit {
   }
 
   addConverter() {
-    console.log('--- adding');
     this.currencyService.addConverter();
     this.currencyService.updateConverters(100, 'RUB');
   }
@@ -65,7 +66,7 @@ export class CurrencyComponent implements OnInit {
     const result = this.currencyService.getCurrencyRates(walletName);
 
     if (result instanceof Observable) {
-      result.subscribe((data) => {
+      result.subscribe((data: Array<IRates>) => {
         this.popularRates = data;
       });
     } else {

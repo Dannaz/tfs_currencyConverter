@@ -177,11 +177,10 @@ export class CurrencyService {
   addConverter() {
     const converter: IConverter = {
       id: Math.random() * 1000,
-      walletName: 'RUB',
+      walletName: undefined,
       walletValue: 0
     };
     this.converters.push(converter);
-    console.log('--- converters', this.converters);
   }
 
   saveConverters() {
@@ -222,6 +221,7 @@ export class CurrencyService {
       })
       .map(rates => {
         this.currency = this.convertToCurrencyArray(rates);
+        console.log(this.currency);
         return this.currency;
       });
   }
@@ -272,5 +272,9 @@ export class CurrencyService {
       .filter((converter: IConverter) => {
         return converter.id !== converterToDelete.id;
       });
+  }
+
+  randomInteger(min: number, max: number): number {
+    return Math.round(min - 0.5 + Math.random() * (max - min + 1));
   }
 }

@@ -15,6 +15,7 @@ export class CurrencyInputComponent implements OnInit {
 
   @Input() currentConverter;
   @Input() currency: object[];
+  @Input() canDelete: boolean;
 
   @Output() currencyInputChange = new EventEmitter();
   @Output() converterDelete = new EventEmitter();

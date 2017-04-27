@@ -57,8 +57,8 @@ input:focus {
 .currency-input__delete-btn:hover {
   opacity: 1;
 }
-delete-btn-hiden {
-  display: none;
+.delete-btn-hidden {
+  display: none !important;
 }
 app-currency-dropdown {
   width: 90%;

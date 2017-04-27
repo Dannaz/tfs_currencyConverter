@@ -1,5 +1,5 @@
 <div class="dropdown" (click)="onItemClick($event.target)">
-  <div class="dropdown-btn">{{currentCurrency?.walletName || "Укажите валюту"}}</div>
+  <div class="dropdown-btn">{{currentCurrency?.walletName || "..."}}</div>
   <ul class="dropdown-content">
     <li
     *ngFor="let wallet of currency"

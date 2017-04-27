@@ -13,7 +13,9 @@
       (currencyChange)="onWalletChange($event)"
     ></app-currency-dropdown>
   </div>
-  <div class="currency-input__delete-btn"
+  <div
+    class="currency-input__delete-btn"
+       [class.delete-btn-hidden]="!canDelete"
     (click)="deleteInput($event)"
   >❌</div>
 </div>
