@@ -1,4 +1,5 @@
 export interface IConverter {
-  walletName: string,
-  walletValue: number
+  id: number;
+  walletName: string;
+  walletValue: number;
 }

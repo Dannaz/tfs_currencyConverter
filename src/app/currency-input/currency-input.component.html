@@ -4,7 +4,6 @@
       type="text"
       [value]="format(currentConverter?.walletValue, SEPARATOR)"
       [formControl]="inputValueControl"
-      (blur)="onBlur($event)"
     >
   </div>
   <div class="currency-input__dropdown">
@@ -17,25 +16,4 @@
   <div class="currency-input__delete-btn"
     (click)="deleteInput($event)"
   >❌</div>
-
 </div>
-<!--
-<input type="text" [value]="unConvertedValue" [formControl]="inputValueControl">
-<select (change)="onValetChange($event.target.value)">
-  <option
-    *ngFor="let valet of valets"
-    [value]="valet.valet"
-    [selected]="valet.valet === currentValet"
-  >{{valet.valet}}</option>
-</select>
-
-<select (change)="onWalletChange($event.target.value)">
-    <option
-      *ngFor="let wallet of currency"
-      [value]="wallet?.walletName"
-      [selected]="wallet?.walletName === currentConverter?.walletName"
-    >{{wallet?.walletName}}</option>
-  </select>
-
-
--->
