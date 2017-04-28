@@ -128,7 +128,7 @@ export class CurrencyService {
         return item.base === myWallet;
       });
       if (!isUndefined(currency)) {
-        console.log('used cached values');
+        console.log('use cached values');
         return currency.rates;
       }
     }
