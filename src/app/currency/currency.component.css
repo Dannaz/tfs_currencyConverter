@@ -16,7 +16,9 @@ app-currency-input {
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
-  font-family: Arial;
+  /*font-family: Arial;*/
+  font-family: "Helvetica Neue";
+  font-weight: 200;
   color: #ffffff;
   font-size: 20px;
   margin: 20px auto;

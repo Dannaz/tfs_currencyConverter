@@ -27,13 +27,13 @@
         <span
           class="currency"
           [class.targeted-currency]="!isSell()"
-        >{{(rate?.rates * 0.99).toFixed(2)}}
+        >{{(rate?.rates * 0.99).toFixed(3)}}
         </span>
         /
         <span
           class="currency"
           [class.targeted-currency]="isSell()"
-        >{{(rate.rates * 1.01 ).toFixed(2)}}
+        >{{(rate.rates * 1.01 ).toFixed(3)}}
         </span>
       </li>
     </ul>

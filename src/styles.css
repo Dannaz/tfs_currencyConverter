@@ -1,8 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-  font-family: Arial SansSerif Tahoma;
+  font-family: "Helvetica Neue";
+  font-weight: 200 !important;
   font-size: 20px;
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
+  color: #34d955 !important;
 }

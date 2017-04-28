@@ -1,6 +1,6 @@
 p {
   display: block;
-  color: #3cb0fd;
+  //color: #3cb0fd;
 }
 .currency-list {
   list-style-type: none;
@@ -22,7 +22,7 @@ p {
   flex-wrap: wrap;
 }
 .currency-list__item {
-  color: #3cb0fd;
+  color: #34d955;
 }
 app-currency-dropdown {
   width: 50%;
@@ -33,7 +33,7 @@ app-currency-dropdown {
 }
 .currency-type-toggler {
   margin-top: 10px;
-  color: #3cb0fd;
+  //color: #3cb0fd;
   font-size: 25px;
   display: flex;
   justify-content: center;
@@ -72,10 +72,10 @@ app-currency-dropdown {
   transition: .4s;
 }
 input:checked + .slider {
-  background-color: #3cb0fd;
+  background-color: #01b726;
 }
 input:focus + .slider {
-  box-shadow: 0 0 1px #3cb0fd;
+  box-shadow: 0 0 1px #01b726;
 }
 input:checked + .slider:before {
   -webkit-transform: translateX(26px);

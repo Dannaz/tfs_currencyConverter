@@ -19,6 +19,11 @@ export class CurrencyComponent implements OnInit {
 
   currency: IWallet[];
   converters: IConverter[];
+  lastUpdatedConverter = {
+    id: 0,
+    walletValue: this.DEFAULT_VALUE,
+    walletName: this.DEFAULT_WALLET
+  };
   popularRates: IRates[];
 
   constructor(private currencyService: CurrencyService) { }
@@ -30,7 +35,7 @@ export class CurrencyComponent implements OnInit {
 
     rates$.subscribe(() => {
       if (isUndefined(this.converters)) {
-        this.converters = this.currencyService.updateConverters(this.DEFAULT_VALUE, this.DEFAULT_WALLET);
+        this.converters = this.currencyService.updateConverters(this.lastUpdatedConverter);
       }
     },
       (err: Error | any) => {
@@ -53,12 +58,18 @@ export class CurrencyComponent implements OnInit {
   }
 
   onCurrencyInputChange(converter) {
-    this.converters = this.currencyService.updateConverters(converter.walletValue, converter.walletName);
+    if (!isNaN(converter.walletValue)) {
+      this.lastUpdatedConverter = converter;
+      this.converters = this.currencyService.updateConverters(converter);
+    } else {
+      this.currencyService.updateConverters(this.lastUpdatedConverter);
+    }
+
   }
 
   addConverter() {
     this.currencyService.addConverter();
-    this.currencyService.updateConverters(100, 'RUB');
+    this.currencyService.updateConverters(this.lastUpdatedConverter);
   }
 
   updatePopularRates(walletName) {
@@ -76,6 +87,6 @@ export class CurrencyComponent implements OnInit {
 
   onConverterDelete(converter) {
     this.currencyService.deleteConverter(converter);
-    this.converters = this.currencyService.updateConverters(converter.walletValue, converter.walletName);
+    this.converters = this.currencyService.updateConverters(converter);
   }
 }

@@ -140,7 +140,7 @@ export class CurrencyService {
            return wallet.walletName !== myWallet;
           })
           .map(wallet => {
-            return `${BASE_URL}/latest?base=${wallet.walletName}&symbols=${myWallet}`;
+            return `${BASE_URL}/latest?base=${myWallet}&symbols=${wallet.walletName}`;
           });
         const requests = urls.map(url => {
           return this.http.get(url)
@@ -150,11 +150,11 @@ export class CurrencyService {
         });
         return Observable.combineLatest(requests);
       })
-      .do((rates) => {
-        const muteRates = Object.keys(rates)
-          .map(key => {
-            return Object.assign(rates[key], {rates: rates[key].rates[myWallet]});
-          });
+      .do((rates: IRates[]) => {
+        Object.keys(rates).map((key) => {
+          const wallets = Object.keys(rates[key].rates);
+          return Object.assign(rates[key], {base: wallets[0]}, {rates: rates[key].rates[wallets[0]]});
+        });
 
         this.cachedRates.push(Object.assign({}, {base: myWallet}, {rates: rates}));
       });
@@ -162,13 +162,13 @@ export class CurrencyService {
     return CurrencyRatesRequest$;
   }
 
-  updateConverters(value: number, wallet: string) {
+  updateConverters(updateWith: IConverter) {
     if (!this.converters) {
       this.converters = this.getConverters();
     }
     this.converters
       .map(converter => {
-        converter.walletValue = this.convertValue(value, wallet, converter.walletName);
+        converter.walletValue = this.convertValue(updateWith.walletValue, updateWith.walletName, converter.walletName);
       });
     this.saveConverters();
     return this.converters;
