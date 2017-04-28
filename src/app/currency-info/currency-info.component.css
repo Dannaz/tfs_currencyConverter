@@ -89,7 +89,7 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 .currency {
-  opacity: 0.5;
+  opacity: 0.3;
 
 }
 .targeted-currency {
